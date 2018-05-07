@@ -1,0 +1,40 @@
+﻿@using EmployeeManagement.Logic
+@using EmployeeManagement.Helpers
+@model EmployeeModel
+
+@Html.Partial("_FilterMenu")
+
+<div class="row header-title">
+
+    <div class="title">Custom Grid with Each Column Filter, Paging and Sorting | DotNettec.com </div>
+    <hr class="hr-tp-0" />
+</div>
+
+<div class="row" id="Sample3List">
+    @Html.Partial("Sample3List", Model)
+</div>
+
+@section scripts{
+    <link href="~/Content/jquery.datetimepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.datetimepicker.full.js"></script>
+
+    <script src="~/Scripts/Common.js"></script>
+    <script type="text/javascript">
+        rootUrl = "@Url.Content("~/")";
+        var ControllerName = "Home"; var ActionName = "Sample3FilterSearch"; var tableList = "Sample3List"; var tableName = "tblSample3";//For Grid
+
+        function InitCheckboxAndDoubleClick() {
+            CheckboxCheck(tableName);//Checkbox Select - Common.js
+        }
+        function DropDownChange($this) {//grid header filter dropdown change
+            Search(ControllerName, ActionName, tableList, tableName);
+        }
+    </script>
+    @*start Grid paging/Sorting*@
+    <script>
+        bindGridEvent(tableName);
+        FilterCondition("condition", ControllerName, ActionName, tableList, tableName);
+    </script>
+}
+
+

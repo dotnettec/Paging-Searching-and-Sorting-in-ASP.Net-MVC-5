@@ -1,0 +1,20 @@
+﻿@using EmployeeManagement.Helpers;
+@*Start Grid Header Filter Menu Condition*@
+<div id="condition" class="filter_list" style="display:none;">
+    <ul id="string">
+        <li data-type="string" data-value="No" class="selected">No Filter</li>
+        <li data-type="date" data-value="No" class="selected">No Filter</li>
+        <li data-type="bool" data-value="false" class="selected">No Filter</li>
+        <li data-value="=" class="selected">Is</li>
+        <li data-value="!=">Is Not</li>
+        <li data-type="string" data-value="Contain">Contain</li>
+        <li data-type="string" data-value="Does not contain">Does Not Contain</li>
+        <li data-type="string" data-value="Starts with">StartsWith</li>
+        <li data-type="string" data-value="Ends with">EndsWith</li>
+        <li data-type="date" data-value=">">After</li>
+        <li data-type="date" data-value="<">Before</li>
+        <li data-value="is null">Is Null</li>
+        <li data-value="is not null">Is Not Null</li>
+    </ul>
+</div>
+

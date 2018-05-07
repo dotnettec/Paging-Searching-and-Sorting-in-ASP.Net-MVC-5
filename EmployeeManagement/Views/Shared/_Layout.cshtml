@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <br />
+    <div class="container">
+        <div id="lblmainmsg" class="hide" style="padding: 6px;"></div>
+        <div id="loadingpnl" class="loader"></div>
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @RenderSection("scripts", required: false)
+
+    <link href="~/Content/style.css" rel="stylesheet" />
+</body>
+</html>

@@ -1,0 +1,145 @@
+﻿@using EmployeeManagement.Logic
+@model EmployeeModel
+@using PagedList.Mvc
+@using EmployeeManagement.Helpers
+@using EmployeeManagement.Model
+
+@{
+    int i = 0;
+    int count = Model.Filters.Count() + 1;
+    int id = Model.Table == null ? 0 : Model.Table.Id;
+}
+
+<div class="table-responsive">
+    <table id="tblSample3" class="table table-striped table-bordered table-hover">
+        <thead>            
+            <tr class="header-title">
+                <th class="text-center" width="4%">
+                    <label class="mt-checkbox  mt-checkbox-outline">
+                        <input type="checkbox" id="chkAll" class="group-checkable" />
+                        <span></span>
+                    </label>
+                    @Html.Hidden("hdnParamNames", "Home|Sample3FilterSearch|Sample3List|tblSample3")@*Ex:  ControllerName|ActionName|tableList|tableName*@
+                </th>
+                @foreach (var filter in Model.Filters)
+                {
+                    if (filter.ColumnName.ToLower() != "id")
+                    {
+
+                        <th @(filter.ColumnName == "CityID" ? "style=display:none" : "")>
+                            @if (filter.ColumnName == "CityName")
+                            {
+                                @Html.Sorter(filter.ColumnName, filter.ColumnName, Model.dynamicListMetaData.TotalItemCount, "Sample3FilterSearch", "Home", 
+                               new AjaxOptions() { UpdateTargetId = "Sample3List", OnSuccess = "bindGridEvent('tblSample3')", OnBegin = "beforePage" }, new { page = Model.dynamicListMetaData.PageNumber, sortOrder = filter.ColumnName == Model.fieldName ? Model.sortOrder : ""})
+                                <div class="input-group">
+                                    @Html.DropDownList("ddlCity", new SelectList(Model.CityList, "Text", "Text", filter.Value), "[None]", new { data_Column = filter.ColumnName, data_condition = "=", data_value = filter.Value, onchange = "DropDownChange(this)", @class = "form-control input-sm txt-filter " })
+                                </div>
+                            }
+                            else if (filter.ColumnName == "IsActive" || filter.ColumnName == "IsDefault")
+                            {
+                                @Html.Sorter(filter.ColumnName, filter.ColumnName, Model.dynamicListMetaData.TotalItemCount, "Sample3FilterSearch", "Home", new AjaxOptions() { UpdateTargetId = "Sample3List", OnSuccess = "bindGridEvent('tblSample3')", OnBegin = "beforePage" }, new { page = Model.dynamicListMetaData.PageNumber, sortOrder = filter.ColumnName == Model.fieldName ? Model.sortOrder : ""})
+                                <div class="input-group">
+                                    @Html.CustomCheckbox(filter.ColumnName, filter.Value == null ? "false" : filter.Value, new { @class = "group-checkable mg-rt-2", data_column = filter.ColumnName, data_condition = (string.IsNullOrEmpty(filter.Condition) ? "false" : filter.Condition) })
+                                    <a class="input-group-addon btn btn-icon-only @(string.IsNullOrEmpty(filter.Condition) ? "btn-filter" : "btn-red")" id="@Html.Raw("filter" + i)">
+                                        <i class="@(string.IsNullOrEmpty(filter.Condition) ? "glyphicon glyphicon-filter" : "glyphicon glyphicon-remove")"></i>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                @Html.Sorter(filter.ColumnName, filter.ColumnName, Model.dynamicListMetaData.TotalItemCount, "Sample3FilterSearch", "Home", new AjaxOptions() { UpdateTargetId = "Sample3List", OnSuccess = "bindGridEvent('tblSample3')", OnBegin = "beforePage" }, new { page = Model.dynamicListMetaData.PageNumber, sortOrder = filter.ColumnName == Model.fieldName ? Model.sortOrder : ""})
+                                <div class="input-group">
+                                    <input type="text" class="form-control input-sm txt-filter" onabort="checkState(this)" data-pastvalue="@filter.Value" data-column="@filter.ColumnName" data-condition="@(string.IsNullOrEmpty(filter.Condition) ? "No" : filter.Condition)" value="@filter.Value" />
+                                    <a class="input-group-addon btn btn-icon-only  @(string.IsNullOrEmpty(filter.Condition) ? "btn-filter" : "btn-red") " id="@Html.Raw("filter" + i)">
+                                        <i class="@(string.IsNullOrEmpty(filter.Condition) ? "glyphicon glyphicon-filter" : "glyphicon glyphicon-remove")"></i>
+                                    </a>
+                                </div>
+                            }
+                        </th>
+                    }
+                    i++;
+                }
+            </tr>
+        </thead>
+        @if (Model != null && Model.dynamicList.Count() > 0)
+        {
+            <tbody>
+                @foreach (var item in Model.dynamicList)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <label class="mt-checkbox  mt-checkbox-outline">
+                                <input type="checkbox" id="chkRow" class="group-checkable" value="@item.Id" />
+                                <span></span>
+                            </label>
+                        </td>
+                        @foreach (var column in item)
+                        {
+                            string columnName = column.Key;
+                            string columnValue = column.Value == null ? string.Empty : Convert.ToString(column.Value);
+                            if (columnName.ToLower() != "id")
+                            {
+                                <td @(columnName == "CityID" ? "style=display:none" : "")>
+                                    @if (columnName.Contains("IsActive"))
+                                    {
+                                        columnValue = columnValue == null ? "false" : columnValue;
+                                        @Html.CustomCheckbox(columnName, columnValue == null ? "false" : columnValue, new { @disabled = "disabled" })
+                                    }
+                                    else if (columnName.ToLower().Contains("date"))
+                                    {
+                                        columnValue = string.IsNullOrEmpty(columnValue) ? "" : Convert.ToDateTime(columnValue).ToString("yyyy-MM-dd hh:mm tt");
+                                        @Html.Raw(columnValue)
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(columnValue)
+                                    }
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        }
+        else
+        {
+            <tbody>
+                <tr>
+                    <td colspan="@count">
+                        No data
+                    </td>
+                </tr>
+            </tbody>
+        }
+        <tfoot>
+            @if (Model != null && Model.dynamicList.Count() != 0)
+            {
+                <tr>
+                    <td colspan="@count">
+                        @{
+                            MVCPagerModel objMVCPagerModel = new MVCPagerModel();
+                            objMVCPagerModel.ActionName = "Sample3FilterSearch";
+                            objMVCPagerModel.ControllerName = "Home";
+                            objMVCPagerModel.UpdateTargetId = "Sample3List";
+                            objMVCPagerModel.TableUpdate = "tblSample3";
+                            objMVCPagerModel.DynamicList = Model.dynamicList;
+                            objMVCPagerModel.DynamicListMetaData = Model.dynamicListMetaData;
+                            objMVCPagerModel.sortOrder = Model.sortOrder;
+                            objMVCPagerModel.fieldName = Model.fieldName;
+                            objMVCPagerModel.StaticPageSize = Model.StaticPageSize;
+                        }
+                        @Html.Partial("_MVCPager", objMVCPagerModel)
+                    </td>
+                </tr>
+                            }
+        </tfoot>
+    </table>
+</div>
+<script>
+    if (typeof SortSetting == 'function') {
+        SortSetting('@(Model.sortOrder == null ? "" : Model.sortOrder)', '@(Model.fieldName == null ? "" : Model.fieldName)');
+    }
+</script>
+
+
+

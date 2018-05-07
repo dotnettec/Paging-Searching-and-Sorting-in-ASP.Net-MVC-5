@@ -1,0 +1,61 @@
+﻿@model EmployeeManagement.Logic.MVCPagerModel
+@using PagedList.Mvc;
+@using EmployeeManagement.Helpers;
+@{
+    string onbegin = "beforePage";
+    string oncomplete = "bindGridEvent('" + Model.TableUpdate + "')";
+    string onsuccess = "";
+    if (Model.OnBegin != null)
+    {
+        onbegin = Model.OnBegin;
+    }
+    if (Model.OnComplete != null)
+    {
+        oncomplete = Model.OnComplete;
+    }
+    if (Model.OnComplete != null)
+    {
+        onsuccess = Model.OnSuccess;
+    }
+
+}
+
+<div class="fixed-table-pagination" style="display: block;">
+    <div class="pull-left">
+        @Html.PagedListPager(new PagedList.StaticPagedList<dynamic>(Model.DynamicList, Model.DynamicListMetaData), page => Url.Action(Model.ActionName, new
+   {
+       page,
+       pageSize = Model.DynamicListMetaData.PageSize,
+       TotalItemCount = Model.DynamicListMetaData.TotalItemCount,
+       CurrentPage = Model.DynamicListMetaData.PageNumber,
+       sortOrder = Model.sortOrder,
+       fieldName = Model.fieldName,
+       IsShowControls = true,
+       IsShowFirstLast = true,
+       IsShowPages = true
+   }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new MyCustomRenderOptions(), new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = Model.UpdateTargetId, OnBegin = onbegin, OnComplete = oncomplete, OnSuccess = onsuccess }))
+
+    </div>
+    <div class="pull-right pagination-detail header-title">
+        <span class="pagination-info">
+            Showing @(Model.DynamicListMetaData.FirstItemOnPage) to @(Model.DynamicListMetaData.LastItemOnPage) of @(Model.DynamicListMetaData.TotalItemCount) items
+        </span>
+       
+        <span class="btn-group dropup">
+
+            <span class="pagination">
+                @Html.PagerDropdown(Model.DynamicListMetaData.PageSize, Model.ActionName, Model.ControllerName, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = Model.UpdateTargetId, OnBegin = onbegin, OnComplete = oncomplete, OnSuccess = onsuccess }, new { sortOrder = Model.sortOrder, fieldName = Model.fieldName, SearchText = Model.SearchText, SearchType = Model.SearchType }, null, Model.StaticPageSize)
+                <input type="hidden" id="hdnoldPagesize" value="@Model.DynamicListMetaData.PageSize" />
+            </span>
+
+        </span>
+        <span class="btn-group dropup">
+            items per page
+        </span>
+    </div>
+</div>
+
+
+
+
+
